@@ -194,7 +194,7 @@ retirementIceland(1990);
 */
 
 /* Challenge */
-function interviewQuestion(job) {
+/* function interviewQuestion(job) {
     return function(name) {
         if (job === 'designer') {
             console.log(name + ', can you please explain what UX design is?');
@@ -207,4 +207,137 @@ function interviewQuestion(job) {
 }
 
 interviewQuestion('teacher')('Ondřej');
-interviewQuestion('designer')('Ondřej');
+interviewQuestion('designer')('Ondřej'); */
+
+// Bind, call and apply
+/* 
+var john = {
+    name: 'John',
+    age: 26,
+    job: 'teacher',
+    presentation: function(style, timeOfDay) {
+        if (style === 'formal') {
+            console.log('Good ' + timeOfDay + ', Ladies and gentlemen! I\'m ' + this.name + ', I\'m a ' + this.job + ' and I\'m ' + this.age + ' years old.');
+        } else if (style === 'friendly') {
+            console.log('Hey! what\'s up? I\'m ' + this.name + ', I\'m a ' + this.job + ' and I\'m ' + this.age + ' years old. Have a nice ' + timeOfDay + '.');
+        }
+    }
+}
+
+var emily = {
+    name: 'Emily',
+    age: 35,
+    job: 'designer'
+}
+
+john.presentation('formal', 'morning');
+
+john.presentation.call(emily, 'friendly', 'afternoon');
+
+// john.presentation.apply(emily, ['friendly', 'afternoon']);
+
+var johnFriendly = john.presentation.bind(john, 'friendly');
+
+johnFriendly('morning');
+johnFriendly('night');
+
+var emilyFormal = john.presentation.bind(emily, 'formal');
+
+emilyFormal('afternoon');
+
+
+var years = [1990, 1965, 1937, 2005, 1998];
+
+function arrayCalc(arr, fn) {
+    var arrRes = [];
+    for (i = 0; i < arr.length; i++) {
+        arrRes.push(fn(arr[i]));
+    }
+    return arrRes;
+}
+
+function calcAge(el) {
+    return 2016 - el;
+}
+
+function isFullAge(limit,el) {
+    return el >= limit;
+}
+
+var ages = arrayCalc(years, calcAge);
+var fullJapan = arrayCalc(ages, isFullAge.bind(this, 20));
+console.log(ages);
+console.log(fullJapan); */
+
+(function() {
+    function Questions(questionName, answers, correctAnswer) {
+        this.questionName = questionName;
+        this.answers = answers;
+        this.correctAnswer = correctAnswer;
+    }
+
+    Questions.prototype.showQuestion = function() {
+        console.log(this.questionName);
+        
+        for(var i = 0; i < this.answers.length; i++) {
+            console.log(i + ': ' + this.answers[i]);
+        }
+    }
+
+    Questions.prototype.isCorrect = function (userAnswer, keepScore) {
+        var actualScore;
+
+        if (userAnswer === this.correctAnswer) {
+            console.log('Odpověděl jsi správně!');
+            actualScore = keepScore(true);
+        } else {
+            console.log('Špatná odpověď! :(');
+            actualScore = keepScore(false);
+        }
+        console.log(actualScore);
+        this.displayScore(actualScore);
+    }
+
+    Questions.prototype.displayScore = function(score) {
+        console.log('Tvé aktuální skóré je: ' + score);
+        console.log('=======================================');
+    }
+
+    function score() {
+        var sc = 0;
+        return function(correct) {
+            if (correct) {
+                sc++;
+            }
+            return sc;
+        }
+    }
+
+    var keepScore = score();
+
+    function nextQuestion() {
+
+        var rand = Math.floor(Math.random() * questionsList.length);
+
+        questionsList[rand].showQuestion();
+
+        var userAnswer = prompt('Odpovězte na otázku.');
+
+        if (userAnswer !== 'exit') {
+            questionsList[rand].isCorrect(parseInt(userAnswer), keepScore);
+            nextQuestion();
+        } else {
+            console.log('Konec hry :)');
+        }
+    }
+
+    var question1 = new Questions('Jaký je rok?', ['2019', '2020'], 0);
+    var question2 = new Questions('Jaké je hlavní město České republiky?', ['Moskva', 'Praha', 'Berlín'], 1);
+    var question3 = new Questions('Kdy vznikla Česká republika?', ['1992', '1986', '1993'], 2);
+    var question4 = new Questions('Kolik má rok měsíců?', ['12', '5'], 0);
+
+    var questionsList = [question1, question2, question3, question4];
+
+    nextQuestion();
+
+})();
